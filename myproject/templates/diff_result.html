@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>DifferDoc - Home</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 80px;
+            scroll-behavior: smooth;
+        }
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #01579B;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .navbar-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+        }
+
+        .logo a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .nav-links li {
+            margin: 0 10px;
+        }
+
+        .nav-links li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links li a:hover {
+            color: #0000FF;
+        }
+
+        .logo {
+            display: inline-block;
+            background: linear-gradient(to right, #ffffff, #0D47A1);
+            padding: 5px;
+            border-radius: 5px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo-img {
+            width: 100px;
+            height: auto;
+            transition: transform 0.3s;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.05);
+        }
+        .diff-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin: 20px;
+        }
+        .diff-column {
+            width: 45%;
+            margin: 1%;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        .line {
+            white-space: pre-wrap;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 2px 5px;
+            border-radius: 3px;
+            margin: 2px 0;
+            text-align: left;
+            display: flex;
+        }
+        .line-number {
+            display: inline-block;
+            width: 40px;
+            text-align: left;
+            padding-right: 10px;
+            color: black; /* Siyah renk */
+        }
+        .line-content {
+            display: inline-block;
+            flex-grow: 1;
+        }
+        .leftonly { background-color: #ffc4c4; } /* light red */
+        .rightonly { background-color: #c9fcd6; } /* light green */
+        .similar { color: black; } /* black text for similar lines */
+        .empty { background-color: #e0e0e0; } /* gri renk */
+        h1, h2 {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        .upload-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 0;
+            font-size: 16px;
+            color: white;
+            background-color:#0D47A1;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .upload-button:hover {
+            background-color: #0000FF;
+        }
+
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        form {
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <a href="{% url 'generate_and_download_diff' %}" class="upload-button">Download Your Files by Clicking Here!</a>
+        <form method="post" enctype="multipart/form-data" action="{% url 'generate_and_download_diff' %}">
+            {% csrf_token %}
+            {{ form }}
+        </form>
+    </div>
+    
+    
+    <h1>Comparison Results</h1>
+    <div class="diff-container">
+        <div class="diff-column">
+            <h2>{{ file1_name }}</h2>
+            {% for diff in differences %}
+                {% if diff.code == DiffCode.SIMILAR %}
+                    <div class="line similar">
+                        <span class="line-number">{{ diff.left_line_no }}</span>
+                        <span class="line-content">{{ diff.line }}</span>
+                    </div>
+                {% elif diff.code == DiffCode.LEFTONLY %}
+                    <div class="line leftonly">
+                        <span class="line-number">{{ diff.left_line_no }}</span>
+                        <span class="line-content">{{ diff.line }}</span>
+                    </div>
+                {% elif diff.code == DiffCode.RIGHTONLY %}
+                    <div class="line empty">
+                        <span class="line-number">{{ diff.left_line_no }}</span>
+                        <span class="line-content"></span>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="diff-column">
+            <h2>{{ file2_name }}</h2>
+            {% for diff in differences %}
+                {% if diff.code == DiffCode.SIMILAR %}
+                    <div class="line similar">
+                        <span class="line-number">{{ diff.right_line_no }}</span>
+                        <span class="line-content">{{ diff.line }}</span>
+                    </div>
+                {% elif diff.code == DiffCode.RIGHTONLY %}
+                    <div class="line rightonly">
+                        <span class="line-number">{{ diff.right_line_no }}</span>
+                        <span class="line-content">{{ diff.line }}</span>
+                    </div>
+                {% elif diff.code == DiffCode.LEFTONLY %}
+                    <div class="line empty">
+                        <span class="line-number">{{ diff.right_line_no }}</span>
+                        <span class="line-content"></span>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

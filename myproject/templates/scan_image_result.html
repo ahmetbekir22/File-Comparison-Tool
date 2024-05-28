@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 120px;
+            padding: 10px;
+            background-color: #f0f0f0;
+
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+    
+        p {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px 50px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            line-height: 1.6;
+        }
+        
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <h1>Scan Image Result</h1>
+    <p>
+        {% for item in recognized_text %}
+            {{ item.text }}
+        {% endfor %}
+    </p>
+</body>
+</html>

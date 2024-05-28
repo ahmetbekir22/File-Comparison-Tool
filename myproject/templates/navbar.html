@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar</title>
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <style>
+        /* Navbar stilini belirleyen CSS kodları */
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #001264; /* Navbar arka plan rengi */
+            color: white; /* Navbar metin rengi */
+            padding: 10px 0; /* Navbar iç boşluğunu azalttım */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Gölge efekti */
+            z-index: 1000; /* Navbar'ı en üstte göster */
+        }
+
+        .navbar-container {
+            max-width: 1200px; /* Navbar'ın maksimum genişliği */
+            margin: 0 auto; /* Navbar'ı yatayda ortala */
+            display: flex; /* Navbar içindeki öğeleri yan yana hizalar */
+            justify-content: space-between; /* Navbar öğelerini arasında eşit boşluk bırakarak hizalar */
+            align-items: center; /* Navbar içindeki öğeleri dikeyde ortalar */
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(to right, #ffffff, #0D47A1);/* Logo arka plan gradienti */
+            padding: 10px 20px; /* Logo iç boşlukları */
+            border-radius: 10px; /* Logo kenarlarını yuvarla */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Logo gölgesi */
+        }
+
+        .logo a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 70px; /* Logo genişliği */
+            height: auto; /* Logo yüksekliğini otomatik olarak ayarlar */
+            transition: transform 0.3s; /* Hover efektleri için geçiş animasyonu */
+        }
+
+        .logo-img:hover {
+            transform: scale(1.05); /* Hover efektiyle biraz büyütme */
+        }
+
+        .brand-name {
+            font-size: 24px; /* Marka ismi font boyutu */
+            margin-left: 10px; /* Logo ile marka ismi arasına boşluk ekler */
+            color: white;
+        }
+
+        .nav-links {
+            list-style-type: none; /* Navbar bağlantılarının işaretini kaldırır */
+            margin: 0; /* Navbar bağlantılarının dış boşluğunu sıfırlar */
+            padding: 0; /* Navbar bağlantılarının iç boşluğunu sıfırlar */
+            display: flex; /* Navbar bağlantılarını yan yana hizalar */
+        }
+
+        .nav-links li {
+            margin: 0 10px; /* Navbar bağlantıları arasında yatay boşluk ekler */
+        }
+
+        .nav-links li a {
+            color: white; /* Navbar bağlantılarının metin rengi */
+            text-decoration: none; /* Navbar bağlantılarının altını çizmez */
+            transition: color 0.3s; /* Hover efektleri için geçiş animasyonu */
+        }
+
+        .nav-links li a:hover {
+            color: #cccccc; /* Hover efektinde bağlantı rengi */
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="navbar-container">
+            <div class="logo">
+                <a href="{% url 'main_page' %}">
+                    <img src="{% static 'images/logo3.png' %}" alt="My Logo" class="logo-img">
+                    <span class="brand-name">DifferDoc</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{% url 'main_page' %}">Main Page</a></li>
+                <li><a href="{% url 'upload_and_compare_files' %}">Compare Files</a></li>
+                <li><a href="{% url 'image_upload_view' %}">Compare Images</a></li>
+                <li><a href="{% url 'character_counter' %}">Character Count</a></li>
+                <li><a href="{% url 'scan_image_upload_view' %}">Scan Image to Text</a></li>
+                <!-- Diğer navbar bağlantıları eklenebilir -->
+            </ul>
+        </div>
+    </nav>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character and Word Counter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #001264;
+            color: white;
+            padding: 10px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 150px auto 50px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+        }
+        .file-upload, .text-area {
+            width: 45%;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        .file-upload {
+            border: 2px dashed #007bff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+        .file-upload:hover {
+            background-color: #e9e9e9;
+        }
+        .file-upload input[type="file"] {
+            display: none;
+        }
+        .file-upload label {
+            color: #007bff;
+            font-weight: bold;
+        }
+        #file-info, #text-info {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .button-container {
+            margin-top: 20px;
+            text-align: center; /* Center alignment */
+        }
+        .button-container button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
+        #reset-file-button {
+            color: white; /* Set text color to white */
+            display: none; /* Initially hidden */
+            background-color: #007bff; /* Set color similar to #back-button */
+            margin: 0 auto; /* Center the button */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 10px 20px;
+        }
+        .text-area textarea {
+            width: 100%;
+            height: 400px; /* Match the size with the file area */
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        #back-button {
+            display: block; /* Always visible */
+            margin: 0 auto; /* Center alignment */
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    
+    <div class="container">
+        <div class="file-upload" id="file-upload">
+            <input type="file" id="file-input" name="file" accept=".csv, .txt">
+            <label for="file-input">Choose or Drag and Drop File</label>
+            <div id="file-info"></div>
+            <button id="reset-file-button">Select New File</button> <!-- Immediately below the file results -->
+        </div>
+        <div class="text-area">
+            <textarea id="text-input" placeholder="Enter text or paste here"></textarea>
+            <div id="text-info"></div>
+        </div>
+    </div>
+    <div class="button-container" id="button-container">
+        <button id="back-button">Back</button> <!-- Always centered button -->
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const fileUpload = document.getElementById('file-upload');
+        const fileInfo = document.getElementById('file-info');
+        const textInput = document.getElementById('text-input');
+        const textInfo = document.getElementById('text-info');
+        const backButton = document.getElementById('back-button');
+        const resetFileButton = document.getElementById('reset-file-button');
+        const buttonContainer = document.getElementById('button-container');
+
+        fileUpload.addEventListener('click', () => fileInput.click());
+
+        fileUpload.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            fileUpload.style.backgroundColor = '#e9e9e9';
+        });
+
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.style.backgroundColor = '#f9f9f9';
+        });
+
+        fileUpload.addEventListener('drop', (event) => {
+            event.preventDefault();
+            fileUpload.style.backgroundColor = '#f9f9f9';
+            const file = event.dataTransfer.files[0];
+            handleFile(file);
+        });
+
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            handleFile(file);
+        });
+
+        textInput.addEventListener('input', () => {
+            const content = textInput.value.trim();
+            const characterCount = content.length;
+            const wordCount = content.split(/\s+/).filter(word => word.length > 0).length;
+            textInfo.innerHTML = `<p>Character Count: ${characterCount}</p><p>Word Count: ${wordCount}</p>`;
+        });
+
+        function handleFile(file) {
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                const content = event.target.result.trim();  // Trim leading/trailing whitespace
+                const characterCount = content.length;
+                const wordCount = content.split(/\s+/).filter(word => word.length > 0).length;  // Filter out empty strings
+                fileInfo.innerHTML = `<p>File Name: ${file.name}</p><p>Character Count: ${characterCount}</p><p>Word Count: ${wordCount}</p>`;
+                resetFileButton.style.display = 'block'; // Show button after file is uploaded
+            };
+
+            if (file) {
+                reader.readAsText(file);
+            }
+        }
+
+        backButton.addEventListener('click', () => {
+            window.history.back();
+        });
+
+        resetFileButton.addEventListener('click', () => {
+            fileInput.value = "";
+            fileInfo.innerHTML = "";
+            resetFileButton.style.display = 'none'; // Hide button when file is removed
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <title>DifferDoc - Home</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 80px;
+            scroll-behavior: smooth;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: rgb(70, 72, 73);
+        }
+
+        .file-input-wrapper {
+            display: inline-block;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f6f6f8;
+            border-radius: 30px;
+            width: 450px;
+            height: 350px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: rgb(39, 35, 35);
+            border: 2px dashed #007bff;
+        }
+
+        .file-input-wrapper.dragover {
+            background-color: #e0e0e0;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            display: none;
+        }
+
+        .file-input-wrapper label {
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #007bff;
+            margin-top: 160px; /* Yukarıdan boşluk */
+        }
+
+        .file-input-wrapper:hover {
+            background-color: #e9e9e9;
+            border: 2px dashed #007bff;
+        }
+
+        .button-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+ 
+
+
+        .button-wrapper button {
+            font-size: 18px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            margin: 10px;
+            background-color: #1A237E;
+            color: white;
+        }
+
+        .button-wrapper button:hover {
+            background-color: #0000FF;
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <h1>UPLOAD FILES AND COMPARE</h1>
+    <form id="file-form" method="post" enctype="multipart/form-data" action="{% url 'upload_and_compare_files' %}">
+        {% csrf_token %}
+        <div style="display: flex; justify-content: center;">
+            <div class="file-input-wrapper" id="file1-wrapper" ondrop="dropHandler(event, 'file1')" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)">
+                <label for="file1">Choose or drag and drop a file</label>
+                <input type="file" id="file1" name="file1" onchange="updateLabel('file1')">
+            </div>
+            <div class="file-input-wrapper" id="file2-wrapper" ondrop="dropHandler(event, 'file2')" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)">
+                <label for="file2">Choose or drag and drop a file</label>
+                <input type="file" id="file2" name="file2" onchange="updateLabel('file2')">
+            </div>
+        </div>
+        <div class="button-wrapper">
+            <button type="button" class="upload-button">UPLOAD</button>
+        </div>
+    </form>
+    
+    <!-- Delete işlemi için form -->
+    <form id="delete-form" method="post" action="{% url 'delete_files' %}">
+        {% csrf_token %}
+        <input type="hidden" name="file1_name" id="file1_name_input">
+        <input type="hidden" name="file2_name" id="file2_name_input">
+        <div class="button-wrapper">
+            <button type="submit" class="delete-button">DELETE</button>
+        </div>
+    </form>
+
+    <script>
+        function handleFileInputClick(event) {
+            var input = event.currentTarget.querySelector('input[type="file"]');
+            if (!input.dataset.selected) {
+                input.click();
+            }
+        }
+
+        function updateLabel(fileInputId) {
+            var input = document.getElementById(fileInputId);
+            var label = input.previousElementSibling; // Etkiketin üstündeki elementi al
+            if (input.files.length > 0) {
+                label.textContent = input.files[0].name;
+                input.dataset.selected = true;
+                var wrapper = input.closest('.file-input-wrapper');
+                wrapper.dataset.selected = 'true';
+                wrapper.style.pointerEvents = 'none';
+                wrapper.style.opacity = '0.6';
+            }
+        }
+
+        function handleFileDragEnter(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        function handleFileDragOver(event) {
+            event.preventDefault();
+        }
+
+        function handleFileDragLeave(event) {
+            event.currentTarget.classList.remove('dragover');
+        }
+
+        function handleFileDrop(event, fileInputId) {
+            event.preventDefault();
+            var input = document.getElementById(fileInputId);
+            var files = event.dataTransfer.files;
+            if (files.length > 0) {
+                input.files = files;
+                updateLabel(fileInputId);
+            }
+            event.currentTarget.classList.remove('dragover');
+        }
+
+        document.getElementById('file1-wrapper').addEventListener('click', handleFileInputClick);
+        document.getElementById('file2-wrapper').addEventListener('click', handleFileInputClick);
+
+        document.getElementById('file1-wrapper').addEventListener('dragenter', handleFileDragEnter);
+        document.getElementById('file1-wrapper').addEventListener('dragover', handleFileDragOver);
+        document.getElementById('file1-wrapper').addEventListener('dragleave', handleFileDragLeave);
+        document.getElementById('file1-wrapper').addEventListener('drop', function(event) {
+            handleFileDrop(event, 'file1');
+        });
+
+        document.getElementById('file2-wrapper').addEventListener('dragenter', handleFileDragEnter);
+        document.getElementById('file2-wrapper').addEventListener('dragover', handleFileDragOver);
+        document.getElementById('file2-wrapper').addEventListener('dragleave', handleFileDragLeave);
+        document.getElementById('file2-wrapper').addEventListener('drop', function(event) {
+            handleFileDrop(event, 'file2');
+        });
+
+        // Upload butonunu etkinleştirme
+        document.querySelector('.upload-button').addEventListener('click', function(event) {
+            var file1Input = document.getElementById('file1');
+            var file2Input = document.getElementById('file2');
+            if (!file1Input.files[0] || !file2Input.files[0]) {
+                alert("Please provide 2 files.");
+                event.preventDefault();
+            } else {
+                document.getElementById('file-form').submit();
+            }
+        });
+
+        // Delete butonunu etkinleştirme
+        document.querySelector('.delete-button').addEventListener('click',
+        function(event) {
+            event.preventDefault(); // Formun submit olmasını engelle
+            document.getElementById('file1_name_input').value = document.getElementById('file1').value;
+            document.getElementById('file2_name_input').value = document.getElementById('file2').value;
+            document.getElementById('delete-form').submit(); 
+        });
+    </script>
+</body>
+</html>

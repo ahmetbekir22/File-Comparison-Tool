@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <title>Upload Images</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff; /* Arka plan rengini beyaz yap */
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 80px;
+            scroll-behavior: smooth;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: rgb(70, 72, 73);
+        }
+        .file-input-wrapper {
+            display: inline-block;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f6f6f8;
+            border-radius: 30px;
+            width: 450px; /* Genişliği artır */
+            height: 420px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgb(39, 35, 35);
+            border: 2px dashed #007bff;
+        }
+        .file-input-wrapper.dragover {
+            background-color: #3949AB;
+            border-color: #82B1FF;
+        }
+        .file-input-wrapper input[type="file"] {
+            display: none;
+        }
+        .file-input-wrapper label {
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #007bff; /* Yazı rengini beyaza ayarla */
+        }
+        .delete-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .button-wrapper {
+            display: flex;
+            justify-content: center; /* Butonları sağa ve sola hizalamak için */
+            margin-top: 40px;
+            width: 100%; /* Butonların genişliğini ayarlar */
+            box-sizing: border-box; /* Padding ve border genişliğini dahil etmek için */
+            padding: 0 20px; /* Butonların kenar boşluklarını ayarlar */
+        }
+        .button-wrapper button {
+            font-size: 18px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            margin: 10px;
+            background-color: #1A237E;
+            color: white;
+            width: 45%; /* Butonların genişliğini ayarlar */
+        }
+        .button-wrapper button:hover {
+            background-color: #0000FF;
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <h1>UPLOAD IMAGES AND COMPARE</h1>
+    <form method="post" enctype="multipart/form-data" action="{% url 'image_upload_view' %}">
+        {% csrf_token %}
+        <div style="display: flex; justify-content: space-between;">
+            <div class="file-input-wrapper" id="file1-wrapper" ondrop="dropHandler(event, 'file1')" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)">
+                <label id="file1-label" for="file1">Choose or drag and drop an image</label>
+                <input type="file" id="file1" name="image1" accept="image/*" onchange="updateLabel('file1')">
+                <button type="button" class="delete-button" id="delete-file1" onclick="deleteFile('file1')">X</button>
+            </div>
+            <div class="file-input-wrapper" id="file2-wrapper" ondrop="dropHandler(event, 'file2')" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)">
+                <label id="file2-label" for="file2">Choose or drag and drop an image</label>
+                <input type="file" id="file2" name="image2" accept="image/*" onchange="updateLabel('file2')">
+                <button type="button" class="delete-button" id="delete-file2" onclick="deleteFile('file2')">X</button>
+            </div>
+        </div>
+        <div class="button-wrapper">
+            <button type="submit" class="upload-button">UPLOAD</button>
+        </div>
+    </form>
+    <script>
+        function handleFileInputClick(event) {
+            var input = event.currentTarget.querySelector('input[type="file"]');
+            if (!input.dataset.selected) {
+                input.click();
+            }
+        }
+
+        function updateLabel(fileInputId) {
+            var input = document.getElementById(fileInputId);
+            var label = document.getElementById(fileInputId + '-label');
+            var deleteButton = document.getElementById('delete-' + fileInputId);
+            var file = input.files[0]; // Seçilen dosyayı al
+            if (file) {
+                var reader = new FileReader(); // Yeni bir FileReader oluştur
+                reader.onload = function(e) {
+                    var img = document.createElement('img'); // Yeni bir img elementi oluştur
+                    img.src = e.target.result; // Resmin kaynağını belirle
+                    img.style.maxWidth = '100%'; // Resmin maksimum genişliğini ayarla
+                    img.style.maxHeight = '100%'; // Resmin maksimum yüksekliğini ayarla
+                    label.innerHTML = ''; // Etiketi temizle
+                    label.appendChild(img); // Etikete resmi ekle
+                }
+                reader.readAsDataURL(file); // Dosyayı oku ve resim olarak görüntüle
+                input.dataset.selected = true;
+                deleteButton.style.display = 'block';
+            }
+        }
+
+        function deleteFile(fileInputId) {
+            var input = document.getElementById(fileInputId);
+            var label = document.getElementById(fileInputId + '-label');
+            var deleteButton = document.getElementById('delete-' + fileInputId);
+            input.value = '';
+            label.textContent = fileInputId.toUpperCase().replace('FILE', 'IMAGE ');
+            deleteButton.style.display = 'none';
+            input.dataset.selected = false;
+        }
+
+        function dragOverHandler(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        function dragLeaveHandler(event) {
+            event.currentTarget.classList.remove('dragover');
+        }
+
+        function dropHandler(event, fileInputId) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+            var input = document.getElementById(fileInputId);
+            var files = event.dataTransfer.files;
+           
+            if (files.length > 0) {
+                input.files = files;
+                updateLabel(fileInputId);
+            }
+        }
+
+        document.getElementById('file1-wrapper').addEventListener('click', handleFileInputClick);
+        document.getElementById('file2-wrapper').addEventListener('click', handleFileInputClick);
+
+        var uploadButton = document.querySelector('.upload-button');
+
+        uploadButton.addEventListener('click', function(event) {
+            var file1Input = document.getElementById('file1');
+            var file2Input = document.getElementById('file2');
+
+            // Dosya seçilmediyse uyarı mesajını göster
+            if (!file1Input.files[0] || !file2Input.files[0]) {
+                alert("Please provide 2 images.");
+                event.preventDefault();
+            } else {
+                document.querySelector('form').submit();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Similarity Results</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 100px; /* Increased margin for better spacing */
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            background: linear-gradient(to right, #034f84, #80ced6);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: white;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background: transparent;
+            border: none;
+        }
+        .card-header {
+            background-color: #01579B;
+            color: white;
+            font-size: 1.5rem;
+            border-radius: 10px 10px 0 0;
+        }
+        .card-body {
+            padding: 2rem;
+            color: white;
+        }
+        .result-images {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .result-images img {
+            max-width: 48%;
+            height: auto;
+            border-radius: 10px;
+        }
+        .result-text {
+            font-size: 1.2rem;
+            color: white;
+            text-align: center;
+        }
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #ffcc5c;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #4a484e;
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                Similarity Results
+            </div>
+            <div class="card-body">
+                <div class="result-text">
+                    <p>Simlarity Result: {{ ssim|floatformat:1 }}%</p>
+                </div>
+                <div class="result-images">
+                    <img src="data:image/png;base64,{{ img1_base64 }}" alt="Image 1">
+                    <img src="data:image/png;base64,{{ img2_base64 }}" alt="Image 2">
+                </div>
+                <div class="text-center mt-4">
+                    <a href="{% url 'image_upload_view' %}" class="back-button"> <- Back </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

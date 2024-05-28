@@ -1,0 +1,43 @@
+category_id,category_name
+1,Single-player
+2,Multi-player
+3,Steam Achievements
+4,Partial Controller Support
+5,Full controller support
+6,Steam Leaderboards
+7,Remote Play on Phone
+8,Remote Play on Tablet
+9,Remote Play on TV
+10,MMO
+11,PvP
+12,Online PvP
+13,Co-op
+14,Online Co-op
+15,In-App Purchases
+16,Steam Cloud
+17,Steam Trading Cards
+18,Shared/Split Screen
+19,Cross-Platform Multiplayer
+20,Remote Play Together
+21,Stats
+22,Shared/Split Screen PvP
+23,Unknown
+24,Captions available
+25,Steam Workshop
+26,Includes level editor
+27,LAN PvP
+28,LAN Co-op
+29,Shared/Split Screen Co-op
+30,Steam Turn Notifications
+31,VR Support
+32,SteamVR Collectibles
+33,Valve Anti-Cheat enabled
+34,Includes Source SDK
+35,Commentary available
+36,Mods
+37,Mods (require HL2)
+38,Tracked Motion Controller Support
+39,Tracked Controller Support
+40,VR Only
+41,VR Supported
+42,HDR available

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 100px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .drop-zone {
+            border: 2px dashed #ccc;
+            height: 100px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .drop-zone input {
+            display: none;
+        }
+        .drop-zone.drag-over {
+            background-color: #e0f7fa;
+        }
+        .drop-zone span {
+            color: #333;
+        }
+        form button[type=submit] {
+            padding: 15px 40px;
+            background-color: #1565c0;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+        form button[type=submit]:hover {
+            background-color: #003c8f;
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <div class="container">
+        <h1>Upload Image for OCR</h1>
+        <form method="post" enctype="multipart/form-data" id="uploadForm">
+            {% csrf_token %}
+            <div class="drop-zone" id="dropZone">
+                <span>Drag & Drop files here or <label for="fileInput">click to browse</label></span>
+                <input type="file" id="fileInput" name="image" accept="image/*" multiple>
+            </div>
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        dropZone.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const files = event.dataTransfer.files;
+            fileInput.files = files;
+            updateDropZoneText();
+        });
+
+        fileInput.addEventListener('change', () => {
+            updateDropZoneText();
+        });
+
+        function updateDropZoneText() {
+            if (fileInput.files.length > 0) {
+                dropZone.querySelector('span').textContent = `${fileInput.files.length} file(s) selected`;
+            } else {
+                dropZone.querySelector('span').textContent = 'Drag & Drop files here or click to browse';
+            }
+        }
+    </script>
+</body>
+</html>
