@@ -9,7 +9,7 @@ Counting characters in a file or a text and count words.
 
 ### Languages used
 - **Django**: Used for running the web application and handling user requests.
-- **HTML CSS JS**  is used for front-end
+- **HTML,CSS, JS**  is used for front-end
 
 ### Libraries Used
 
