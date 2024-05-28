@@ -3,6 +3,7 @@
 - **LCS** alghorithm is used,
  
 Comparing 2 image and calculate similarity score 
+- **SSIM**  alghorithm is used for calculation of similarity.
 
 Counting characters in a file or a text and count words.
 
@@ -20,7 +21,6 @@ Counting characters in a file or a text and count words.
 
 - **difflib** is used for comparison.
 
-- **SSIM** is used for calculation of similarity.
 
 - **Scikit-Image (skimage)** is used to SSIM calculation. 
 
